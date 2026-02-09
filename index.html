@@ -1,288 +1,256 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>KamaLove</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root { --bg:#ffffff; --text:#111; --muted:#777; --card:#fff; --border:#ececec; }
-    html,body{height:100%; margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
-    .app{height:100vh; display:flex; flex-direction:column; max-width:520px; margin:0 auto;}
-    .top{flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 14px;}
-    .brand{font-weight:800; letter-spacing:.2px}
-    .iconBtn{border:1px solid var(--border); background:#fff; border-radius:12px; padding:8px 10px; cursor:pointer; font-weight:700;}
-    .stage{flex:1 1 auto; display:flex; flex-direction:column; padding:0 14px 12px; gap:10px; min-height:0;}
-    .card{flex:1 1 auto; border:1px solid var(--border); border-radius:18px; overflow:hidden; background:var(--card); display:flex; flex-direction:column; min-height:0;}
-    .photo{width:100%; flex:1 1 auto; object-fit:cover; background:#f3f3f3;}
-    .info{padding:12px 12px 10px;}
-    .title{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
-    .name{font-size:20px; font-weight:800}
-    .city{font-size:12px; color:var(--muted); white-space:nowrap}
-    .about{margin-top:6px; font-size:14px; line-height:1.35; color:#333}
-    .actions{flex:0 0 auto; display:flex; gap:12px; justify-content:center; padding:10px 0 0;}
-    .round{width:64px; height:64px; border-radius:999px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:22px;}
-    .hint{font-size:12px; color:var(--muted); text-align:center; min-height:16px}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>KamaLove</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    /* overlays */
-    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:flex-end; justify-content:center; padding:14px;}
-    .sheet{width:min(520px,100%); background:#fff; border-radius:18px; border:1px solid var(--border); max-height:82vh; display:flex; flex-direction:column; overflow:hidden;}
-    .sheetTop{padding:12px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border);}
-    .sheetTitle{font-weight:800}
-    .list{padding:10px 14px; overflow:auto; display:flex; flex-direction:column; gap:10px;}
-    .item{display:flex; gap:10px; align-items:center; border:1px solid var(--border); border-radius:14px; padding:10px; cursor:pointer;}
-    .ava{width:44px; height:44px; border-radius:12px; object-fit:cover; background:#f2f2f2;}
-    .itName{font-weight:800; margin:0}
-    .itSub{font-size:12px; color:var(--muted); margin:2px 0 0}
+<style>
+html,body{
+  margin:0;
+  height:100%;
+  background:#fff;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  color:#111;
+}
+.app{
+  max-width:420px;
+  margin:0 auto;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+.header{
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-weight:800;
+  font-size:18px;
+}
+.msgBtn{
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:14px;
+  padding:8px 12px;
+  font-weight:600;
+}
+.stage{
+  flex:1;
+  padding:0 14px 12px;
+  display:flex;
+  flex-direction:column;
+}
+.card{
+  flex:1;
+  border:1px solid #eee;
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.photo{
+  flex:1;
+  width:100%;
+  object-fit:cover;
+  background:#f2f2f2;
+}
+.info{
+  padding:12px;
+}
+.name{
+  font-size:20px;
+  font-weight:800;
+}
+.city{
+  font-size:12px;
+  color:#777;
+}
+.about{
+  margin-top:6px;
+  font-size:14px;
+  line-height:1.35;
+}
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:12px 0;
+}
+.action{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  border:1px solid #ddd;
+  font-size:22px;
+  background:#fff;
+}
+.hint{
+  text-align:center;
+  font-size:12px;
+  color:#777;
+  min-height:16px;
+}
 
-    /* chat */
-    .chatBox{padding:10px 14px; overflow:auto; flex:1 1 auto; background:#fff;}
-    .msg{margin:8px 0; display:flex;}
-    .bub{max-width:80%; padding:10px 12px; border-radius:16px; border:1px solid var(--border); background:#f7f7f7; font-size:14px; white-space:pre-wrap; word-break:break-word;}
-    .msg.user{justify-content:flex-end}
-    .msg.user .bub{background:#111; color:#fff; border-color:#111}
-    .composer{display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--border);}
-    .inp{flex:1; border:1px solid var(--border); border-radius:14px; padding:12px; font-size:14px;}
-    .send{border:1px solid #111; background:#111; color:#fff; border-radius:14px; padding:12px 14px; font-weight:800; cursor:pointer;}
-  </style>
+/* overlay */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  justify-content:center;
+  align-items:flex-end;
+}
+.sheet{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:18px 18px 0 0;
+  max-height:80vh;
+  display:flex;
+  flex-direction:column;
+}
+.sheetHeader{
+  padding:12px 14px;
+  font-weight:800;
+  border-bottom:1px solid #eee;
+}
+.list{
+  overflow:auto;
+  padding:10px 14px;
+}
+.item{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  border:1px solid #eee;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+.ava{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  object-fit:cover;
+}
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:10px 14px;
+}
+.msg{
+  margin:6px 0;
+  display:flex;
+}
+.msg.user{justify-content:flex-end}
+.bubble{
+  max-width:75%;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid #eee;
+}
+.msg.user .bubble{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+.inputRow{
+  display:flex;
+  gap:8px;
+  padding:10px 14px;
+  border-top:1px solid #eee;
+}
+.input{
+  flex:1;
+  border:1px solid #ddd;
+  border-radius:14px;
+  padding:12px;
+}
+.send{
+  border-radius:14px;
+  background:#111;
+  color:#fff;
+  border:none;
+  padding:12px 14px;
+  font-weight:700;
+}
+</style>
 </head>
+
 <body>
 <div class="app">
-  <div class="top">
-    <div>
-      <div class="brand">KamaLove</div>
-      <div id="who" style="font-size:12px;color:var(--muted)"></div>
-    </div>
-    <button class="iconBtn" id="openMatches">💬 Матчи</button>
+  <div class="header">
+    <div class="logo">KamaLove</div>
+    <button class="msgBtn" id="openMessages">Сообщения</button>
   </div>
 
   <div class="stage">
     <div class="card">
-      <img id="photo" class="photo" alt="">
+      <img id="photo" class="photo">
       <div class="info">
-        <div class="title">
-          <div class="name" id="name">—</div>
-          <div class="city" id="city">—</div>
-        </div>
+        <div class="name" id="name">—</div>
+        <div class="city" id="city">—</div>
         <div class="about" id="about">—</div>
       </div>
     </div>
 
     <div class="actions">
-      <button class="round" id="nope">❌</button>
-      <button class="round" id="like">❤️</button>
+      <button class="action" id="nope">❌</button>
+      <button class="action" id="like">❤️</button>
     </div>
-
     <div class="hint" id="hint"></div>
   </div>
 </div>
 
-<!-- Matches overlay -->
-<div class="overlay" id="matchesOv">
+<div class="overlay" id="messagesOv">
   <div class="sheet">
-    <div class="sheetTop">
-      <div class="sheetTitle">Матчи</div>
-      <button class="iconBtn" id="closeMatches">✕</button>
-    </div>
-    <div class="list" id="matchesList"></div>
-  </div>
-</div>
-
-<!-- Chat overlay -->
-<div class="overlay" id="chatOv">
-  <div class="sheet" style="align-items:stretch;">
-    <div class="sheetTop">
-      <div class="sheetTitle" id="chatTitle">Чат</div>
-      <button class="iconBtn" id="closeChat">✕</button>
-    </div>
-    <div class="chatBox" id="chatBox"></div>
-    <div class="composer">
-      <input class="inp" id="chatInput" placeholder="Сообщение..." />
-      <button class="send" id="sendBtn">Отправить</button>
-    </div>
+    <div class="sheetHeader">Сообщения</div>
+    <div class="list" id="messagesList"></div>
   </div>
 </div>
 
 <script>
-  const API = "https://kamalove-api.89123631000g.workers.dev";
+const API="https://kamalove-api.89123631000g.workers.dev";
+const tg=window.Telegram?.WebApp;
+tg?.ready();
+const tg_id=tg?.initDataUnsafe?.user?.id||"111";
+let current=null;
 
-  const tg = window.Telegram?.WebApp;
-  if (tg) tg.ready();
-
-  const tg_id = (tg?.initDataUnsafe?.user?.id?.toString()) || "111";
-  document.getElementById("who").textContent = "tg_id: " + tg_id;
-
-  let current = null;
-  let currentChatProfileId = null;
-
-  const hint = document.getElementById("hint");
-  const photo = document.getElementById("photo");
-  const nameEl = document.getElementById("name");
-  const cityEl = document.getElementById("city");
-  const aboutEl = document.getElementById("about");
-
-  async function loadFeed() {
-    hint.textContent = "Загрузка…";
-    try {
-      const r = await fetch(`${API}/feed?tg_id=${encodeURIComponent(tg_id)}`);
-      const d = await r.json();
-      if (!d.ok) { hint.textContent = d.error || "Ошибка"; return; }
-
-      current = d.profiles?.[0] || null;
-      if (!current) {
-        hint.textContent = "Лента закончилась (демо).";
-        photo.src = "";
-        nameEl.textContent = "—";
-        cityEl.textContent = "—";
-        aboutEl.textContent = "—";
-        return;
-      }
-
-      photo.src = current.photo_url || "";
-      nameEl.textContent = `${current.name}, ${current.age}`;
-      cityEl.textContent = current.city || "";
-      aboutEl.textContent = current.about || "";
-      hint.textContent = "";
-    } catch (e) {
-      hint.textContent = "Ошибка загрузки (проверь CORS/Deploy воркера)";
-    }
-  }
-
-  async function swipe(action) {
-    if (!current) return;
-    hint.textContent = "Отправляем…";
-    try {
-      const r = await fetch(`${API}/swipe`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ tg_id, profile_id: current.id, action })
-      });
-      const d = await r.json();
-      if (!d.ok) { hint.textContent = d.error || "Ошибка"; return; }
-      hint.textContent = (action==="like" && d.matched) ? "Есть матч 💬" : "";
-      await loadFeed();
-    } catch (e) {
-      hint.textContent = "Ошибка отправки";
-    }
-  }
-
-  document.getElementById("like").onclick = () => swipe("like");
-  document.getElementById("nope").onclick = () => swipe("nope");
-
-  // Matches
-  const matchesOv = document.getElementById("matchesOv");
-  const matchesList = document.getElementById("matchesList");
-  document.getElementById("openMatches").onclick = async () => { matchesOv.style.display="flex"; await loadMatches(); };
-  document.getElementById("closeMatches").onclick = () => { matchesOv.style.display="none"; };
-
-  async function loadMatches() {
-    matchesList.innerHTML = `<div style="font-size:12px;color:#777">Загрузка…</div>`;
-    try {
-      const r = await fetch(`${API}/matches?tg_id=${encodeURIComponent(tg_id)}`);
-      const d = await r.json();
-      if (!d.ok) { matchesList.innerHTML = `<div style="font-size:12px;color:#777">${d.error||"Ошибка"}</div>`; return; }
-
-      const arr = d.matches || [];
-      if (arr.length === 0) {
-        matchesList.innerHTML = `<div style="font-size:12px;color:#777">Матчей пока нет. Поставь ❤️</div>`;
-        return;
-      }
-
-      matchesList.innerHTML = "";
-      arr.forEach(m => {
-        const it = document.createElement("div");
-        it.className = "item";
-        it.onclick = () => openChat(m.profile_id, m.name);
-
-        const img = document.createElement("img");
-        img.className = "ava";
-        img.src = m.photo_url || "";
-
-        const box = document.createElement("div");
-        const t = document.createElement("div");
-        t.className = "itName";
-        t.textContent = `${m.name}, ${m.age}`;
-
-        const s = document.createElement("div");
-        s.className = "itSub";
-        s.textContent = (m.city||"") + (m.about ? " • " + m.about : "");
-
-        box.appendChild(t); box.appendChild(s);
-        it.appendChild(img); it.appendChild(box);
-        matchesList.appendChild(it);
-      });
-    } catch (e) {
-      matchesList.innerHTML = `<div style="font-size:12px;color:#777">Ошибка загрузки</div>`;
-    }
-  }
-
-  // Chat
-  const chatOv = document.getElementById("chatOv");
-  const chatTitle = document.getElementById("chatTitle");
-  const chatBox = document.getElementById("chatBox");
-  const chatInput = document.getElementById("chatInput");
-  const sendBtn = document.getElementById("sendBtn");
-
-  document.getElementById("closeChat").onclick = () => { chatOv.style.display="none"; };
-  async function openChat(profile_id, n) {
-    currentChatProfileId = profile_id;
-    chatTitle.textContent = `Чат: ${n || ""}`;
-    matchesOv.style.display="none";
-    chatOv.style.display="flex";
-    await loadThread();
-  }
-
-  async function loadThread() {
-    chatBox.innerHTML = `<div style="font-size:12px;color:#777">Загрузка…</div>`;
-    try {
-      const r = await fetch(`${API}/thread?tg_id=${encodeURIComponent(tg_id)}&profile_id=${encodeURIComponent(currentChatProfileId)}`);
-      const d = await r.json();
-      if (!d.ok) { chatBox.innerHTML = `<div style="font-size:12px;color:#777">${d.error||"Ошибка"}</div>`; return; }
-
-      const msgs = d.messages || [];
-      chatBox.innerHTML = "";
-      if (msgs.length === 0) {
-        chatBox.innerHTML = `<div style="font-size:12px;color:#777">Напиши первое сообщение.</div>`;
-        return;
-      }
-
-      msgs.forEach(m => {
-        const row = document.createElement("div");
-        row.className = "msg " + (m.sender === "user" ? "user" : "profile");
-        const b = document.createElement("div");
-        b.className = "bub";
-        b.textContent = m.text;
-        row.appendChild(b);
-        chatBox.appendChild(row);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    } catch (e) {
-      chatBox.innerHTML = `<div style="font-size:12px;color:#777">Ошибка загрузки</div>`;
-    }
-  }
-
-  sendBtn.onclick = async () => {
-    const text = (chatInput.value || "").trim();
-    if (!text || !currentChatProfileId) return;
-
-    sendBtn.disabled = true;
-    try {
-      const r = await fetch(`${API}/message`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ tg_id, profile_id: currentChatProfileId, text })
-      });
-      const d = await r.json();
-      if (d.ok) {
-        chatInput.value = "";
-        await loadThread();
-      }
-    } finally {
-      sendBtn.disabled = false;
-    }
-  };
-
+async function loadFeed(){
+  const r=await fetch(API+"/feed?tg_id="+tg_id);
+  const d=await r.json();
+  current=d.profiles?.[0]||null;
+  if(!current){return;}
+  photo.src=current.photo_url;
+  name.textContent=current.name+", "+current.age;
+  city.textContent=current.city;
+  about.textContent=current.about;
+}
+async function swipe(a){
+  if(!current)return;
+  await fetch(API+"/swipe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tg_id,profile_id:current.id,action:a})});
   loadFeed();
+}
+like.onclick=()=>swipe("like");
+nope.onclick=()=>swipe("nope");
+
+openMessages.onclick=async()=>{
+  messagesOv.style.display="flex";
+  const r=await fetch(API+"/matches?tg_id="+tg_id);
+  const d=await r.json();
+  messagesList.innerHTML="";
+  (d.matches||[]).forEach(m=>{
+    const i=document.createElement("div");
+    i.className="item";
+    i.innerHTML=`<img class="ava" src="${m.photo_url}"><div><b>${m.name}</b><br><small>${m.city}</small></div>`;
+    messagesList.appendChild(i);
+  });
+};
+
+loadFeed();
 </script>
 </body>
 </html>
