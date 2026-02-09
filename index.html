@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KamaLove</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      margin: 0;
+      padding: 12px;
+      background: #fff;
+    }
+    .chat {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+    .msg {
+      margin: 4px 0;
+    }
+    .user { text-align: right; }
+    .profile { text-align: left; color: #444; }
+    input {
+      width: 80%;
+      padding: 6px;
+    }
+    button {
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h3>KamaLove</h3>
+
+<div class="chat" id="chat"></div>
+
+<input id="text" placeholder="Сообщение..." />
+<button onclick="send()">Отправить</button>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+
+  const tg_id = tg.initDataUnsafe?.user?.id?.toString() || "111";
+  const profile_id = 11; // для MVP фиксируем
+
+  const chatEl = document.getElementById("chat");
+
+  function render(messages) {
+    chatEl.innerHTML = "";
+    messages.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "msg " + m.sender;
+      div.textContent = m.text;
+      chatEl.appendChild(div);
+    });
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+
+  async function loadThread() {
+    const res = await fetch(
+      `https://kamalove-api.89123631000g.workers.dev/thread?tg_id=${tg_id}&profile_id=${profile_id}`
+    );
+    const data = await res.json();
+    if (data.ok) render(data.messages);
+  }
+
+  async function send() {
+    const text = document.getElementById("text").value;
+    if (!text) return;
+
+    await fetch("https://kamalove-api.89123631000g.workers.dev/message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tg_id, profile_id, text })
+    });
+
+    document.getElementById("text").value = "";
+    await loadThread();
+  }
+
+  loadThread();
+</script>
+
+</body>
+</html>
