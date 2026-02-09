@@ -2,92 +2,503 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>KamaLove</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       margin: 0;
-      padding: 12px;
       background: #fff;
+      color: #111;
     }
-    .chat {
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+    .tabs {
+      display:flex;
+      gap:8px;
+    }
+    .tab {
       border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 8px;
-      height: 300px;
+      background:#fff;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor:pointer;
+      font-size: 14px;
+    }
+    .tab.active {
+      border-color:#111;
+      font-weight:600;
+    }
+    .small {
+      font-size: 12px;
+      color:#666;
+    }
+    .card {
+      border: 1px solid #eee;
+      border-radius: 14px;
+      overflow: hidden;
+      background:#fff;
+    }
+    .photo {
+      width:100%;
+      aspect-ratio: 4/5;
+      background:#f3f3f3;
+      display:block;
+      object-fit: cover;
+    }
+    .content {
+      padding: 12px;
+    }
+    .nameRow {
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:6px;
+    }
+    .name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .meta {
+      color:#666;
+      font-size: 13px;
+      text-align:right;
+      white-space:nowrap;
+    }
+    .about {
+      color:#333;
+      font-size: 14px;
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+    .actions {
+      display:flex;
+      gap:10px;
+      padding: 12px;
+      border-top:1px solid #eee;
+      background:#fafafa;
+    }
+    .btn {
+      flex: 1;
+      border: 1px solid #ddd;
+      background:#fff;
+      padding: 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .btn.primary {
+      border-color:#111;
+    }
+    .row {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .list {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .matchItem {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border:1px solid #eee;
+      border-radius: 12px;
+      padding:10px;
+      cursor:pointer;
+      background:#fff;
+    }
+    .avatar {
+      width:44px;
+      height:44px;
+      border-radius: 12px;
+      object-fit:cover;
+      background:#f2f2f2;
+      flex: 0 0 auto;
+    }
+    .matchTitle {
+      font-weight:700;
+      margin:0;
+    }
+    .matchSub {
+      margin:2px 0 0;
+      color:#666;
+      font-size: 12px;
+    }
+    .chatBox {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      height: 360px;
       overflow-y: auto;
-      margin-bottom: 8px;
+      padding: 10px;
+      background:#fff;
     }
     .msg {
-      margin: 4px 0;
+      margin: 6px 0;
+      display:flex;
     }
-    .user { text-align: right; }
-    .profile { text-align: left; color: #444; }
-    input {
-      width: 80%;
-      padding: 6px;
+    .bubble {
+      max-width: 80%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid #eee;
+      background:#f7f7f7;
+      font-size: 14px;
+      line-height: 1.3;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
-    button {
-      padding: 6px 10px;
+    .msg.user { justify-content: flex-end; }
+    .msg.user .bubble { background:#111; color:#fff; border-color:#111; }
+    .msg.profile { justify-content: flex-start; }
+    .composer {
+      display:flex;
+      gap:8px;
+      margin-top: 10px;
     }
+    .input {
+      flex:1;
+      border:1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+    }
+    .sendBtn {
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .hint {
+      color:#666;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .hidden { display:none; }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div style="font-size:20px;font-weight:800;">KamaLove</div>
+        <div class="small" id="who"></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" id="tabFeed">Лента</button>
+        <button class="tab" id="tabMatches">Матчи</button>
+        <button class="tab" id="tabChat">Чат</button>
+      </div>
+    </div>
 
-<h3>KamaLove</h3>
+    <!-- FEED -->
+    <div id="viewFeed">
+      <div class="card" id="feedCard">
+        <img id="feedPhoto" class="photo" src="" alt="">
+        <div class="content">
+          <div class="nameRow">
+            <div class="name" id="feedName">—</div>
+            <div class="meta" id="feedMeta">—</div>
+          </div>
+          <div class="about" id="feedAbout">—</div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="btnNope">👎 Не нравится</button>
+          <button class="btn primary" id="btnLike">👍 Лайк</button>
+        </div>
+      </div>
+      <div class="hint" id="feedHint"></div>
+    </div>
 
-<div class="chat" id="chat"></div>
+    <!-- MATCHES -->
+    <div id="viewMatches" class="hidden">
+      <div class="list" id="matchesList"></div>
+      <div class="hint" id="matchesHint"></div>
+    </div>
 
-<input id="text" placeholder="Сообщение..." />
-<button onclick="send()">Отправить</button>
+    <!-- CHAT -->
+    <div id="viewChat" class="hidden">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px;">
+        <div>
+          <div style="font-weight:800;" id="chatTitle">Чат</div>
+          <div class="small" id="chatSub">Выбери матч</div>
+        </div>
+      </div>
+
+      <div class="chatBox" id="chatBox"></div>
+
+      <div class="composer">
+        <input class="input" id="chatInput" placeholder="Сообщение..." />
+        <button class="sendBtn" id="chatSend">Отправить</button>
+      </div>
+      <div class="hint">MVP: лайк сразу создаёт матч (для демо). Чат доступен по матчам.</div>
+    </div>
+  </div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.ready();
+  // === CONFIG ===
+  const API = "https://kamalove-api.89123631000g.workers.dev";
 
-  const tg_id = tg.initDataUnsafe?.user?.id?.toString() || "111";
-  const profile_id = 11; // для MVP фиксируем
+  // === Telegram init ===
+  const tg = window.Telegram?.WebApp;
+  if (tg) tg.ready();
 
-  const chatEl = document.getElementById("chat");
+  const tg_id = (tg?.initDataUnsafe?.user?.id?.toString()) || "111";
+  document.getElementById("who").textContent = "tg_id: " + tg_id;
 
-  function render(messages) {
-    chatEl.innerHTML = "";
-    messages.forEach(m => {
-      const div = document.createElement("div");
-      div.className = "msg " + m.sender;
-      div.textContent = m.text;
-      chatEl.appendChild(div);
-    });
-    chatEl.scrollTop = chatEl.scrollHeight;
+  // State
+  let currentProfile = null;
+  let currentChatProfileId = null;
+  let currentChatProfileName = "";
+
+  // Tabs/views
+  const tabFeed = document.getElementById("tabFeed");
+  const tabMatches = document.getElementById("tabMatches");
+  const tabChat = document.getElementById("tabChat");
+
+  const viewFeed = document.getElementById("viewFeed");
+  const viewMatches = document.getElementById("viewMatches");
+  const viewChat = document.getElementById("viewChat");
+
+  function setTab(active) {
+    [tabFeed, tabMatches, tabChat].forEach(b => b.classList.remove("active"));
+    viewFeed.classList.add("hidden");
+    viewMatches.classList.add("hidden");
+    viewChat.classList.add("hidden");
+
+    if (active === "feed") {
+      tabFeed.classList.add("active");
+      viewFeed.classList.remove("hidden");
+    } else if (active === "matches") {
+      tabMatches.classList.add("active");
+      viewMatches.classList.remove("hidden");
+    } else if (active === "chat") {
+      tabChat.classList.add("active");
+      viewChat.classList.remove("hidden");
+    }
   }
+
+  tabFeed.onclick = async () => { setTab("feed"); await loadFeed(); };
+  tabMatches.onclick = async () => { setTab("matches"); await loadMatches(); };
+  tabChat.onclick = async () => { setTab("chat"); await loadThread(); };
+
+  // FEED elements
+  const feedPhoto = document.getElementById("feedPhoto");
+  const feedName = document.getElementById("feedName");
+  const feedMeta = document.getElementById("feedMeta");
+  const feedAbout = document.getElementById("feedAbout");
+  const feedHint = document.getElementById("feedHint");
+
+  document.getElementById("btnLike").onclick = async () => {
+    if (!currentProfile) return;
+    await swipe("like");
+  };
+  document.getElementById("btnNope").onclick = async () => {
+    if (!currentProfile) return;
+    await swipe("nope");
+  };
+
+  async function loadFeed() {
+    feedHint.textContent = "Загрузка...";
+    try {
+      const res = await fetch(`${API}/feed?tg_id=${encodeURIComponent(tg_id)}`);
+      const data = await res.json();
+      if (!data.ok) { feedHint.textContent = data.error || "Ошибка"; return; }
+
+      const p = (data.profiles && data.profiles[0]) ? data.profiles[0] : null;
+      currentProfile = p;
+
+      if (!p) {
+        feedHint.textContent = "Лента закончилась (для демо).";
+        feedPhoto.src = "";
+        feedName.textContent = "—";
+        feedMeta.textContent = "—";
+        feedAbout.textContent = "—";
+        return;
+      }
+
+      feedPhoto.src = p.photo_url || "";
+      feedName.textContent = `${p.name}, ${p.age}`;
+      feedMeta.textContent = p.city || "";
+      feedAbout.textContent = p.about || "";
+      feedHint.textContent = "";
+    } catch (e) {
+      feedHint.textContent = "Ошибка загрузки";
+    }
+  }
+
+  async function swipe(action) {
+    feedHint.textContent = "Отправляем...";
+    try {
+      const res = await fetch(`${API}/swipe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tg_id,
+          profile_id: currentProfile.id,
+          action
+        })
+      });
+      const data = await res.json();
+      if (!data.ok) { feedHint.textContent = data.error || "Ошибка"; return; }
+
+      if (action === "like" && data.matched) {
+        feedHint.textContent = "Есть матч! Открой «Матчи» → выбери чат.";
+      } else {
+        feedHint.textContent = "";
+      }
+
+      await loadFeed();
+    } catch (e) {
+      feedHint.textContent = "Ошибка отправки";
+    }
+  }
+
+  // MATCHES
+  const matchesList = document.getElementById("matchesList");
+  const matchesHint = document.getElementById("matchesHint");
+
+  async function loadMatches() {
+    matchesHint.textContent = "Загрузка...";
+    matchesList.innerHTML = "";
+    try {
+      const res = await fetch(`${API}/matches?tg_id=${encodeURIComponent(tg_id)}`);
+      const data = await res.json();
+      if (!data.ok) { matchesHint.textContent = data.error || "Ошибка"; return; }
+
+      const items = data.matches || [];
+      if (items.length === 0) {
+        matchesHint.textContent = "Матчей пока нет. Поставь лайк в ленте.";
+        return;
+      }
+
+      matchesHint.textContent = "";
+      items.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "matchItem";
+        div.onclick = () => openChat(m.profile_id, m.name);
+
+        const img = document.createElement("img");
+        img.className = "avatar";
+        img.src = m.photo_url || "";
+
+        const info = document.createElement("div");
+        const title = document.createElement("div");
+        title.className = "matchTitle";
+        title.textContent = `${m.name}, ${m.age}`;
+
+        const sub = document.createElement("div");
+        sub.className = "matchSub";
+        sub.textContent = (m.city || "") + (m.about ? " • " + m.about : "");
+
+        info.appendChild(title);
+        info.appendChild(sub);
+
+        div.appendChild(img);
+        div.appendChild(info);
+        matchesList.appendChild(div);
+      });
+    } catch (e) {
+      matchesHint.textContent = "Ошибка загрузки";
+    }
+  }
+
+  function openChat(profileId, name) {
+    currentChatProfileId = profileId;
+    currentChatProfileName = name || "";
+    document.getElementById("chatTitle").textContent = currentChatProfileName ? `Чат: ${currentChatProfileName}` : "Чат";
+    document.getElementById("chatSub").textContent = `profile_id: ${profileId}`;
+    setTab("chat");
+    loadThread();
+  }
+
+  // CHAT
+  const chatBox = document.getElementById("chatBox");
+  const chatInput = document.getElementById("chatInput");
+  const chatSend = document.getElementById("chatSend");
+
+  chatSend.onclick = async () => {
+    const text = (chatInput.value || "").trim();
+    if (!text) return;
+    if (!currentChatProfileId) return;
+
+    chatSend.disabled = true;
+    try {
+      const res = await fetch(`${API}/message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tg_id, profile_id: currentChatProfileId, text })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        chatInput.value = "";
+        await loadThread();
+      }
+    } finally {
+      chatSend.disabled = false;
+    }
+  };
 
   async function loadThread() {
-    const res = await fetch(
-      `https://kamalove-api.89123631000g.workers.dev/thread?tg_id=${tg_id}&profile_id=${profile_id}`
-    );
-    const data = await res.json();
-    if (data.ok) render(data.messages);
+    chatBox.innerHTML = "";
+    if (!currentChatProfileId) {
+      chatBox.innerHTML = `<div class="small">Открой вкладку «Матчи» и выбери человека.</div>`;
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/thread?tg_id=${encodeURIComponent(tg_id)}&profile_id=${encodeURIComponent(currentChatProfileId)}`);
+      const data = await res.json();
+      if (!data.ok) {
+        chatBox.innerHTML = `<div class="small">${data.error || "Ошибка"}</div>`;
+        return;
+      }
+      const msgs = data.messages || [];
+      if (msgs.length === 0) {
+        chatBox.innerHTML = `<div class="small">Напиши первое сообщение.</div>`;
+        return;
+      }
+
+      msgs.forEach(m => {
+        const row = document.createElement("div");
+        row.className = "msg " + (m.sender === "user" ? "user" : "profile");
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = m.text;
+        row.appendChild(bubble);
+        chatBox.appendChild(row);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    } catch (e) {
+      chatBox.innerHTML = `<div class="small">Ошибка загрузки</div>`;
+    }
   }
 
-  async function send() {
-    const text = document.getElementById("text").value;
-    if (!text) return;
-
-    await fetch("https://kamalove-api.89123631000g.workers.dev/message", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tg_id, profile_id, text })
-    });
-
-    document.getElementById("text").value = "";
-    await loadThread();
-  }
-
-  loadThread();
+  // Start
+  (async function init() {
+    setTab("feed");
+    await loadFeed();
+  })();
 </script>
 
 </body>
