@@ -4,502 +4,285 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>KamaLove</title>
-
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <style>
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      margin: 0;
-      background: #fff;
-      color: #111;
-    }
-    .wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 12px;
-    }
-    .topbar {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      margin-bottom:10px;
-    }
-    .tabs {
-      display:flex;
-      gap:8px;
-    }
-    .tab {
-      border: 1px solid #ddd;
-      background:#fff;
-      padding: 8px 10px;
-      border-radius: 10px;
-      cursor:pointer;
-      font-size: 14px;
-    }
-    .tab.active {
-      border-color:#111;
-      font-weight:600;
-    }
-    .small {
-      font-size: 12px;
-      color:#666;
-    }
-    .card {
-      border: 1px solid #eee;
-      border-radius: 14px;
-      overflow: hidden;
-      background:#fff;
-    }
-    .photo {
-      width:100%;
-      aspect-ratio: 4/5;
-      background:#f3f3f3;
-      display:block;
-      object-fit: cover;
-    }
-    .content {
-      padding: 12px;
-    }
-    .nameRow {
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:8px;
-      margin-bottom:6px;
-    }
-    .name {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .meta {
-      color:#666;
-      font-size: 13px;
-      text-align:right;
-      white-space:nowrap;
-    }
-    .about {
-      color:#333;
-      font-size: 14px;
-      line-height: 1.35;
-      margin-top: 6px;
-    }
-    .actions {
-      display:flex;
-      gap:10px;
-      padding: 12px;
-      border-top:1px solid #eee;
-      background:#fafafa;
-    }
-    .btn {
-      flex: 1;
-      border: 1px solid #ddd;
-      background:#fff;
-      padding: 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .btn.primary {
-      border-color:#111;
-    }
-    .row {
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-    .list {
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .matchItem {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      border:1px solid #eee;
-      border-radius: 12px;
-      padding:10px;
-      cursor:pointer;
-      background:#fff;
-    }
-    .avatar {
-      width:44px;
-      height:44px;
-      border-radius: 12px;
-      object-fit:cover;
-      background:#f2f2f2;
-      flex: 0 0 auto;
-    }
-    .matchTitle {
-      font-weight:700;
-      margin:0;
-    }
-    .matchSub {
-      margin:2px 0 0;
-      color:#666;
-      font-size: 12px;
-    }
-    .chatBox {
-      border: 1px solid #eee;
-      border-radius: 12px;
-      height: 360px;
-      overflow-y: auto;
-      padding: 10px;
-      background:#fff;
-    }
-    .msg {
-      margin: 6px 0;
-      display:flex;
-    }
-    .bubble {
-      max-width: 80%;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid #eee;
-      background:#f7f7f7;
-      font-size: 14px;
-      line-height: 1.3;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .msg.user { justify-content: flex-end; }
-    .msg.user .bubble { background:#111; color:#fff; border-color:#111; }
-    .msg.profile { justify-content: flex-start; }
-    .composer {
-      display:flex;
-      gap:8px;
-      margin-top: 10px;
-    }
-    .input {
-      flex:1;
-      border:1px solid #ddd;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 14px;
-    }
-    .sendBtn {
-      border:1px solid #111;
-      background:#111;
-      color:#fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .hint {
-      color:#666;
-      font-size: 12px;
-      margin-top: 8px;
-    }
-    .hidden { display:none; }
+    :root { --bg:#ffffff; --text:#111; --muted:#777; --card:#fff; --border:#ececec; }
+    html,body{height:100%; margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+    .app{height:100vh; display:flex; flex-direction:column; max-width:520px; margin:0 auto;}
+    .top{flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 14px;}
+    .brand{font-weight:800; letter-spacing:.2px}
+    .iconBtn{border:1px solid var(--border); background:#fff; border-radius:12px; padding:8px 10px; cursor:pointer; font-weight:700;}
+    .stage{flex:1 1 auto; display:flex; flex-direction:column; padding:0 14px 12px; gap:10px; min-height:0;}
+    .card{flex:1 1 auto; border:1px solid var(--border); border-radius:18px; overflow:hidden; background:var(--card); display:flex; flex-direction:column; min-height:0;}
+    .photo{width:100%; flex:1 1 auto; object-fit:cover; background:#f3f3f3;}
+    .info{padding:12px 12px 10px;}
+    .title{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+    .name{font-size:20px; font-weight:800}
+    .city{font-size:12px; color:var(--muted); white-space:nowrap}
+    .about{margin-top:6px; font-size:14px; line-height:1.35; color:#333}
+    .actions{flex:0 0 auto; display:flex; gap:12px; justify-content:center; padding:10px 0 0;}
+    .round{width:64px; height:64px; border-radius:999px; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:22px;}
+    .hint{font-size:12px; color:var(--muted); text-align:center; min-height:16px}
+
+    /* overlays */
+    .overlay{position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:flex-end; justify-content:center; padding:14px;}
+    .sheet{width:min(520px,100%); background:#fff; border-radius:18px; border:1px solid var(--border); max-height:82vh; display:flex; flex-direction:column; overflow:hidden;}
+    .sheetTop{padding:12px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border);}
+    .sheetTitle{font-weight:800}
+    .list{padding:10px 14px; overflow:auto; display:flex; flex-direction:column; gap:10px;}
+    .item{display:flex; gap:10px; align-items:center; border:1px solid var(--border); border-radius:14px; padding:10px; cursor:pointer;}
+    .ava{width:44px; height:44px; border-radius:12px; object-fit:cover; background:#f2f2f2;}
+    .itName{font-weight:800; margin:0}
+    .itSub{font-size:12px; color:var(--muted); margin:2px 0 0}
+
+    /* chat */
+    .chatBox{padding:10px 14px; overflow:auto; flex:1 1 auto; background:#fff;}
+    .msg{margin:8px 0; display:flex;}
+    .bub{max-width:80%; padding:10px 12px; border-radius:16px; border:1px solid var(--border); background:#f7f7f7; font-size:14px; white-space:pre-wrap; word-break:break-word;}
+    .msg.user{justify-content:flex-end}
+    .msg.user .bub{background:#111; color:#fff; border-color:#111}
+    .composer{display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--border);}
+    .inp{flex:1; border:1px solid var(--border); border-radius:14px; padding:12px; font-size:14px;}
+    .send{border:1px solid #111; background:#111; color:#fff; border-radius:14px; padding:12px 14px; font-weight:800; cursor:pointer;}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div>
-        <div style="font-size:20px;font-weight:800;">KamaLove</div>
-        <div class="small" id="who"></div>
-      </div>
-      <div class="tabs">
-        <button class="tab active" id="tabFeed">Лента</button>
-        <button class="tab" id="tabMatches">Матчи</button>
-        <button class="tab" id="tabChat">Чат</button>
-      </div>
+<div class="app">
+  <div class="top">
+    <div>
+      <div class="brand">KamaLove</div>
+      <div id="who" style="font-size:12px;color:var(--muted)"></div>
     </div>
-
-    <!-- FEED -->
-    <div id="viewFeed">
-      <div class="card" id="feedCard">
-        <img id="feedPhoto" class="photo" src="" alt="">
-        <div class="content">
-          <div class="nameRow">
-            <div class="name" id="feedName">—</div>
-            <div class="meta" id="feedMeta">—</div>
-          </div>
-          <div class="about" id="feedAbout">—</div>
-        </div>
-        <div class="actions">
-          <button class="btn" id="btnNope">👎 Не нравится</button>
-          <button class="btn primary" id="btnLike">👍 Лайк</button>
-        </div>
-      </div>
-      <div class="hint" id="feedHint"></div>
-    </div>
-
-    <!-- MATCHES -->
-    <div id="viewMatches" class="hidden">
-      <div class="list" id="matchesList"></div>
-      <div class="hint" id="matchesHint"></div>
-    </div>
-
-    <!-- CHAT -->
-    <div id="viewChat" class="hidden">
-      <div class="row" style="justify-content:space-between;margin-bottom:8px;">
-        <div>
-          <div style="font-weight:800;" id="chatTitle">Чат</div>
-          <div class="small" id="chatSub">Выбери матч</div>
-        </div>
-      </div>
-
-      <div class="chatBox" id="chatBox"></div>
-
-      <div class="composer">
-        <input class="input" id="chatInput" placeholder="Сообщение..." />
-        <button class="sendBtn" id="chatSend">Отправить</button>
-      </div>
-      <div class="hint">MVP: лайк сразу создаёт матч (для демо). Чат доступен по матчам.</div>
-    </div>
+    <button class="iconBtn" id="openMatches">💬 Матчи</button>
   </div>
 
+  <div class="stage">
+    <div class="card">
+      <img id="photo" class="photo" alt="">
+      <div class="info">
+        <div class="title">
+          <div class="name" id="name">—</div>
+          <div class="city" id="city">—</div>
+        </div>
+        <div class="about" id="about">—</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="round" id="nope">❌</button>
+      <button class="round" id="like">❤️</button>
+    </div>
+
+    <div class="hint" id="hint"></div>
+  </div>
+</div>
+
+<!-- Matches overlay -->
+<div class="overlay" id="matchesOv">
+  <div class="sheet">
+    <div class="sheetTop">
+      <div class="sheetTitle">Матчи</div>
+      <button class="iconBtn" id="closeMatches">✕</button>
+    </div>
+    <div class="list" id="matchesList"></div>
+  </div>
+</div>
+
+<!-- Chat overlay -->
+<div class="overlay" id="chatOv">
+  <div class="sheet" style="align-items:stretch;">
+    <div class="sheetTop">
+      <div class="sheetTitle" id="chatTitle">Чат</div>
+      <button class="iconBtn" id="closeChat">✕</button>
+    </div>
+    <div class="chatBox" id="chatBox"></div>
+    <div class="composer">
+      <input class="inp" id="chatInput" placeholder="Сообщение..." />
+      <button class="send" id="sendBtn">Отправить</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // === CONFIG ===
   const API = "https://kamalove-api.89123631000g.workers.dev";
 
-  // === Telegram init ===
   const tg = window.Telegram?.WebApp;
   if (tg) tg.ready();
 
   const tg_id = (tg?.initDataUnsafe?.user?.id?.toString()) || "111";
   document.getElementById("who").textContent = "tg_id: " + tg_id;
 
-  // State
-  let currentProfile = null;
+  let current = null;
   let currentChatProfileId = null;
-  let currentChatProfileName = "";
 
-  // Tabs/views
-  const tabFeed = document.getElementById("tabFeed");
-  const tabMatches = document.getElementById("tabMatches");
-  const tabChat = document.getElementById("tabChat");
-
-  const viewFeed = document.getElementById("viewFeed");
-  const viewMatches = document.getElementById("viewMatches");
-  const viewChat = document.getElementById("viewChat");
-
-  function setTab(active) {
-    [tabFeed, tabMatches, tabChat].forEach(b => b.classList.remove("active"));
-    viewFeed.classList.add("hidden");
-    viewMatches.classList.add("hidden");
-    viewChat.classList.add("hidden");
-
-    if (active === "feed") {
-      tabFeed.classList.add("active");
-      viewFeed.classList.remove("hidden");
-    } else if (active === "matches") {
-      tabMatches.classList.add("active");
-      viewMatches.classList.remove("hidden");
-    } else if (active === "chat") {
-      tabChat.classList.add("active");
-      viewChat.classList.remove("hidden");
-    }
-  }
-
-  tabFeed.onclick = async () => { setTab("feed"); await loadFeed(); };
-  tabMatches.onclick = async () => { setTab("matches"); await loadMatches(); };
-  tabChat.onclick = async () => { setTab("chat"); await loadThread(); };
-
-  // FEED elements
-  const feedPhoto = document.getElementById("feedPhoto");
-  const feedName = document.getElementById("feedName");
-  const feedMeta = document.getElementById("feedMeta");
-  const feedAbout = document.getElementById("feedAbout");
-  const feedHint = document.getElementById("feedHint");
-
-  document.getElementById("btnLike").onclick = async () => {
-    if (!currentProfile) return;
-    await swipe("like");
-  };
-  document.getElementById("btnNope").onclick = async () => {
-    if (!currentProfile) return;
-    await swipe("nope");
-  };
+  const hint = document.getElementById("hint");
+  const photo = document.getElementById("photo");
+  const nameEl = document.getElementById("name");
+  const cityEl = document.getElementById("city");
+  const aboutEl = document.getElementById("about");
 
   async function loadFeed() {
-    feedHint.textContent = "Загрузка...";
+    hint.textContent = "Загрузка…";
     try {
-      const res = await fetch(`${API}/feed?tg_id=${encodeURIComponent(tg_id)}`);
-      const data = await res.json();
-      if (!data.ok) { feedHint.textContent = data.error || "Ошибка"; return; }
+      const r = await fetch(`${API}/feed?tg_id=${encodeURIComponent(tg_id)}`);
+      const d = await r.json();
+      if (!d.ok) { hint.textContent = d.error || "Ошибка"; return; }
 
-      const p = (data.profiles && data.profiles[0]) ? data.profiles[0] : null;
-      currentProfile = p;
-
-      if (!p) {
-        feedHint.textContent = "Лента закончилась (для демо).";
-        feedPhoto.src = "";
-        feedName.textContent = "—";
-        feedMeta.textContent = "—";
-        feedAbout.textContent = "—";
+      current = d.profiles?.[0] || null;
+      if (!current) {
+        hint.textContent = "Лента закончилась (демо).";
+        photo.src = "";
+        nameEl.textContent = "—";
+        cityEl.textContent = "—";
+        aboutEl.textContent = "—";
         return;
       }
 
-      feedPhoto.src = p.photo_url || "";
-      feedName.textContent = `${p.name}, ${p.age}`;
-      feedMeta.textContent = p.city || "";
-      feedAbout.textContent = p.about || "";
-      feedHint.textContent = "";
+      photo.src = current.photo_url || "";
+      nameEl.textContent = `${current.name}, ${current.age}`;
+      cityEl.textContent = current.city || "";
+      aboutEl.textContent = current.about || "";
+      hint.textContent = "";
     } catch (e) {
-      feedHint.textContent = "Ошибка загрузки";
+      hint.textContent = "Ошибка загрузки (проверь CORS/Deploy воркера)";
     }
   }
 
   async function swipe(action) {
-    feedHint.textContent = "Отправляем...";
+    if (!current) return;
+    hint.textContent = "Отправляем…";
     try {
-      const res = await fetch(`${API}/swipe`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tg_id,
-          profile_id: currentProfile.id,
-          action
-        })
+      const r = await fetch(`${API}/swipe`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ tg_id, profile_id: current.id, action })
       });
-      const data = await res.json();
-      if (!data.ok) { feedHint.textContent = data.error || "Ошибка"; return; }
-
-      if (action === "like" && data.matched) {
-        feedHint.textContent = "Есть матч! Открой «Матчи» → выбери чат.";
-      } else {
-        feedHint.textContent = "";
-      }
-
+      const d = await r.json();
+      if (!d.ok) { hint.textContent = d.error || "Ошибка"; return; }
+      hint.textContent = (action==="like" && d.matched) ? "Есть матч 💬" : "";
       await loadFeed();
     } catch (e) {
-      feedHint.textContent = "Ошибка отправки";
+      hint.textContent = "Ошибка отправки";
     }
   }
 
-  // MATCHES
+  document.getElementById("like").onclick = () => swipe("like");
+  document.getElementById("nope").onclick = () => swipe("nope");
+
+  // Matches
+  const matchesOv = document.getElementById("matchesOv");
   const matchesList = document.getElementById("matchesList");
-  const matchesHint = document.getElementById("matchesHint");
+  document.getElementById("openMatches").onclick = async () => { matchesOv.style.display="flex"; await loadMatches(); };
+  document.getElementById("closeMatches").onclick = () => { matchesOv.style.display="none"; };
 
   async function loadMatches() {
-    matchesHint.textContent = "Загрузка...";
-    matchesList.innerHTML = "";
+    matchesList.innerHTML = `<div style="font-size:12px;color:#777">Загрузка…</div>`;
     try {
-      const res = await fetch(`${API}/matches?tg_id=${encodeURIComponent(tg_id)}`);
-      const data = await res.json();
-      if (!data.ok) { matchesHint.textContent = data.error || "Ошибка"; return; }
+      const r = await fetch(`${API}/matches?tg_id=${encodeURIComponent(tg_id)}`);
+      const d = await r.json();
+      if (!d.ok) { matchesList.innerHTML = `<div style="font-size:12px;color:#777">${d.error||"Ошибка"}</div>`; return; }
 
-      const items = data.matches || [];
-      if (items.length === 0) {
-        matchesHint.textContent = "Матчей пока нет. Поставь лайк в ленте.";
+      const arr = d.matches || [];
+      if (arr.length === 0) {
+        matchesList.innerHTML = `<div style="font-size:12px;color:#777">Матчей пока нет. Поставь ❤️</div>`;
         return;
       }
 
-      matchesHint.textContent = "";
-      items.forEach(m => {
-        const div = document.createElement("div");
-        div.className = "matchItem";
-        div.onclick = () => openChat(m.profile_id, m.name);
+      matchesList.innerHTML = "";
+      arr.forEach(m => {
+        const it = document.createElement("div");
+        it.className = "item";
+        it.onclick = () => openChat(m.profile_id, m.name);
 
         const img = document.createElement("img");
-        img.className = "avatar";
+        img.className = "ava";
         img.src = m.photo_url || "";
 
-        const info = document.createElement("div");
-        const title = document.createElement("div");
-        title.className = "matchTitle";
-        title.textContent = `${m.name}, ${m.age}`;
+        const box = document.createElement("div");
+        const t = document.createElement("div");
+        t.className = "itName";
+        t.textContent = `${m.name}, ${m.age}`;
 
-        const sub = document.createElement("div");
-        sub.className = "matchSub";
-        sub.textContent = (m.city || "") + (m.about ? " • " + m.about : "");
+        const s = document.createElement("div");
+        s.className = "itSub";
+        s.textContent = (m.city||"") + (m.about ? " • " + m.about : "");
 
-        info.appendChild(title);
-        info.appendChild(sub);
-
-        div.appendChild(img);
-        div.appendChild(info);
-        matchesList.appendChild(div);
+        box.appendChild(t); box.appendChild(s);
+        it.appendChild(img); it.appendChild(box);
+        matchesList.appendChild(it);
       });
     } catch (e) {
-      matchesHint.textContent = "Ошибка загрузки";
+      matchesList.innerHTML = `<div style="font-size:12px;color:#777">Ошибка загрузки</div>`;
     }
   }
 
-  function openChat(profileId, name) {
-    currentChatProfileId = profileId;
-    currentChatProfileName = name || "";
-    document.getElementById("chatTitle").textContent = currentChatProfileName ? `Чат: ${currentChatProfileName}` : "Чат";
-    document.getElementById("chatSub").textContent = `profile_id: ${profileId}`;
-    setTab("chat");
-    loadThread();
-  }
-
-  // CHAT
+  // Chat
+  const chatOv = document.getElementById("chatOv");
+  const chatTitle = document.getElementById("chatTitle");
   const chatBox = document.getElementById("chatBox");
   const chatInput = document.getElementById("chatInput");
-  const chatSend = document.getElementById("chatSend");
+  const sendBtn = document.getElementById("sendBtn");
 
-  chatSend.onclick = async () => {
-    const text = (chatInput.value || "").trim();
-    if (!text) return;
-    if (!currentChatProfileId) return;
-
-    chatSend.disabled = true;
-    try {
-      const res = await fetch(`${API}/message`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tg_id, profile_id: currentChatProfileId, text })
-      });
-      const data = await res.json();
-      if (data.ok) {
-        chatInput.value = "";
-        await loadThread();
-      }
-    } finally {
-      chatSend.disabled = false;
-    }
-  };
+  document.getElementById("closeChat").onclick = () => { chatOv.style.display="none"; };
+  async function openChat(profile_id, n) {
+    currentChatProfileId = profile_id;
+    chatTitle.textContent = `Чат: ${n || ""}`;
+    matchesOv.style.display="none";
+    chatOv.style.display="flex";
+    await loadThread();
+  }
 
   async function loadThread() {
-    chatBox.innerHTML = "";
-    if (!currentChatProfileId) {
-      chatBox.innerHTML = `<div class="small">Открой вкладку «Матчи» и выбери человека.</div>`;
-      return;
-    }
-
+    chatBox.innerHTML = `<div style="font-size:12px;color:#777">Загрузка…</div>`;
     try {
-      const res = await fetch(`${API}/thread?tg_id=${encodeURIComponent(tg_id)}&profile_id=${encodeURIComponent(currentChatProfileId)}`);
-      const data = await res.json();
-      if (!data.ok) {
-        chatBox.innerHTML = `<div class="small">${data.error || "Ошибка"}</div>`;
-        return;
-      }
-      const msgs = data.messages || [];
+      const r = await fetch(`${API}/thread?tg_id=${encodeURIComponent(tg_id)}&profile_id=${encodeURIComponent(currentChatProfileId)}`);
+      const d = await r.json();
+      if (!d.ok) { chatBox.innerHTML = `<div style="font-size:12px;color:#777">${d.error||"Ошибка"}</div>`; return; }
+
+      const msgs = d.messages || [];
+      chatBox.innerHTML = "";
       if (msgs.length === 0) {
-        chatBox.innerHTML = `<div class="small">Напиши первое сообщение.</div>`;
+        chatBox.innerHTML = `<div style="font-size:12px;color:#777">Напиши первое сообщение.</div>`;
         return;
       }
 
       msgs.forEach(m => {
         const row = document.createElement("div");
         row.className = "msg " + (m.sender === "user" ? "user" : "profile");
-        const bubble = document.createElement("div");
-        bubble.className = "bubble";
-        bubble.textContent = m.text;
-        row.appendChild(bubble);
+        const b = document.createElement("div");
+        b.className = "bub";
+        b.textContent = m.text;
+        row.appendChild(b);
         chatBox.appendChild(row);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
     } catch (e) {
-      chatBox.innerHTML = `<div class="small">Ошибка загрузки</div>`;
+      chatBox.innerHTML = `<div style="font-size:12px;color:#777">Ошибка загрузки</div>`;
     }
   }
 
-  // Start
-  (async function init() {
-    setTab("feed");
-    await loadFeed();
-  })();
-</script>
+  sendBtn.onclick = async () => {
+    const text = (chatInput.value || "").trim();
+    if (!text || !currentChatProfileId) return;
 
+    sendBtn.disabled = true;
+    try {
+      const r = await fetch(`${API}/message`, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ tg_id, profile_id: currentChatProfileId, text })
+      });
+      const d = await r.json();
+      if (d.ok) {
+        chatInput.value = "";
+        await loadThread();
+      }
+    } finally {
+      sendBtn.disabled = false;
+    }
+  };
+
+  loadFeed();
+</script>
 </body>
 </html>
